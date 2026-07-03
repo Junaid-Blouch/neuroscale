@@ -11,3 +11,4 @@ reportlab
 python-docx
 xlsxwriter
 python-multipart
+matplotlib
