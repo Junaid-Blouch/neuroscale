@@ -10,3 +10,4 @@ joblib
 reportlab
 python-docx
 xlsxwriter
+python-multipart
