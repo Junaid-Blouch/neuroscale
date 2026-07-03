@@ -9,5 +9,5 @@ gymnasium
 joblib
 reportlab
 python-docx
-xlsxwriters
+xlsxwriter
 python-multipart
