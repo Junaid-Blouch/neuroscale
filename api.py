@@ -10,6 +10,12 @@ import os
 import datetime
 from stable_baselines3 import PPO
 
+# --- NEW: Graph Generation Libraries ---
+import matplotlib.pyplot as plt
+import io
+import base64
+# ---------------------------------------
+
 # Report libraries
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table
 from reportlab.lib.styles import ParagraphStyle
@@ -78,6 +84,13 @@ def multi_step_forecast(initial_scaled_window, steps=168):
 
     return predictions
 
+# --- NEW: UI Server Endpoint ---
+@app.get("/")
+def serve_frontend():
+    # Yeh frontend ko browser mein show karega
+    return FileResponse("web/index.html")
+# -------------------------------
+
 @app.post("/predict")
 async def predict(
     file: UploadFile = File(...),
@@ -137,7 +150,42 @@ async def predict(
         ])
 
     if format == ReportFormat.json:
-        return JSONResponse(content=report_data)
+        # --- NEW: UI Integration Logic (Graph & Dictionary Formatting) ---
+        
+        # 1. Generate Dark-Mode Graph
+        plt.figure(figsize=(10, 4))
+        loads = [row[1] for row in report_data]
+        plt.plot(range(len(loads)), loads, color='#00ffcc', linewidth=2)
+        
+        # Styling to match your SaaS UI
+        plt.gca().set_facecolor('#050505')
+        plt.gcf().patch.set_facecolor('#050505')
+        plt.tick_params(colors='white')
+        plt.grid(color='rgba(255, 255, 255, 0.1)', linestyle='--', alpha=0.5)
+        plt.tight_layout()
+
+        # Save to buffer and encode
+        buf = io.BytesIO()
+        plt.savefig(buf, format="png", bbox_inches='tight')
+        buf.seek(0)
+        graph_base64 = base64.b64encode(buf.read()).decode("utf-8")
+        plt.close()
+
+        # 2. Format Data for the Frontend Table
+        formatted_forecast = []
+        for row in report_data:
+            formatted_forecast.append({
+                "datetime": row[0],
+                "predicted_load": row[1],
+                "action": row[2],
+                "servers": row[3]
+            })
+
+        return JSONResponse(content={
+            "forecast": formatted_forecast,
+            "forecast_graph_base64": graph_base64
+        })
+        # ----------------------------------------------------------------
 
     if format == ReportFormat.pdf:
 

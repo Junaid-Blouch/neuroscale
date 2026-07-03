@@ -1,143 +1,320 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>NeuroScale AI</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroScale AI | Predictive Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg-color: #050505;
+            --surface-color: rgba(20, 20, 22, 0.85);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --accent-primary: #00ffcc;
+            --accent-glow: rgba(0, 255, 204, 0.3);
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            
+            --safe: #34d399;
+            --warning: #fbbf24;
+            --danger: #f87171;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            color: white;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            padding: 40px 20px;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(0, 255, 204, 0.05), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(88, 166, 255, 0.05), transparent 25%);
         }
 
         .container {
-            width: 85%;
-            margin: auto;
-            padding: 40px;
+            max-width: 1100px;
+            margin: 0 auto;
         }
 
-        h1 {
+        /* Header Styling */
+        .header-panel {
             text-align: center;
+            margin-bottom: 40px;
         }
 
+        .header-panel h1 {
+            font-size: 32px;
+            letter-spacing: -1px;
+            color: #fff;
+            text-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .header-panel p { color: var(--text-muted); margin-top: 10px; }
+
+        /* Upload Card */
         .card {
-            background: white;
-            color: black;
-            padding: 25px;
-            border-radius: 10px;
-            margin-top: 30px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            background: var(--surface-color);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        button {
-            padding: 10px 20px;
-            background: #2a5298;
-            color: white;
-            border: none;
-            border-radius: 5px;
+        .upload-section {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        input[type="file"] {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            border-radius: 8px;
+            color: var(--text-main);
             cursor: pointer;
         }
 
-        button:hover {
-            background: #1e3c72;
-        }
-
-        img {
-            width: 100%;
-            margin-top: 20px;
+        button {
+            background: linear-gradient(135deg, rgba(0, 255, 204, 0.1), transparent);
+            border: 1px solid var(--accent-primary);
+            color: var(--accent-primary);
+            padding: 12px 24px;
             border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
 
+        button:hover {
+            background: var(--accent-primary);
+            color: #000;
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        /* Dashboard Results Section */
+        #resultsDashboard { display: none; }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Graph Container */
+        .graph-container img {
+            width: 100%;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.1);
+        }
+
+        /* Table Styling */
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 15px;
-        }
-
-        th, td {
-            border: 1px solid #ccc;
-            padding: 6px;
-            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
         }
 
         th {
-            background-color: #2a5298;
-            color: white;
+            background: rgba(0,0,0,0.4);
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 12px;
+            text-align: left;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            color: #fff;
+        }
+
+        tr:hover td { background: rgba(255,255,255,0.02); }
+
+        /* Status Badges */
+        .badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge.safe { background: rgba(52, 211, 153, 0.1); color: var(--safe); border: 1px solid var(--safe); }
+        .badge.warning { background: rgba(251, 191, 36, 0.1); color: var(--warning); border: 1px solid var(--warning); }
+        .badge.danger { background: rgba(248, 113, 113, 0.1); color: var(--danger); border: 1px solid var(--danger); box-shadow: 0 0 10px rgba(248, 113, 113, 0.3);}
+
+        /* System Status Alert */
+        .system-status {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
         }
     </style>
 </head>
-
 <body>
 
 <div class="container">
-
-    <h1>NeuroScale AI Weekly Forecast</h1>
-    <p style="text-align:center;">
-        Upload your workload dataset and get 7‑Day Hourly Forecast
-    </p>
-
-    <div class="card">
-        <h3>Upload Workload CSV</h3>
-        <input type="file" id="fileInput">
-        <br><br>
-        <button onclick="send()">Generate Forecast</button>
+    <div class="header-panel">
+        <h1>NeuroScale AI</h1>
+        <p>7-Day Advanced Workload Forecasting & Analysis Engine</p>
     </div>
 
     <div class="card">
-        <h3>Forecast Summary (First 24 Hours)</h3>
-        <div id="tableContainer"></div>
+        <div class="upload-section">
+            <input type="file" id="fileInput" accept=".csv">
+            <button onclick="send()" id="btnSubmit">Execute Prediction</button>
+        </div>
     </div>
 
-    <div class="card">
-        <h3>7‑Day Forecast Graph</h3>
-        <img id="forecastGraph" />
+    <div id="resultsDashboard">
+        
+        <div class="system-status card" id="overallStatusCard">
+            <span style="color: var(--text-muted)">Overall System Status:</span>
+            <span id="overallStatusText" class="badge">Processing...</span>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="card graph-container">
+                <h3 style="margin-bottom: 15px; color: var(--accent-primary);">AI Forecast Trajectory</h3>
+                <img id="forecastGraph" alt="Model Prediction Graph will appear here" />
+            </div>
+
+            <div class="card">
+                <h3 style="margin-bottom: 15px; color: var(--accent-primary);">First 24-Hours Telemetry</h3>
+                <div style="max-height: 400px; overflow-y: auto; padding-right: 5px;">
+                    <table id="dataTable">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Predicted Load</th>
+                                <th>Risk Level</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 
 </div>
 
 <script>
 async function send() {
-
     const file = document.getElementById("fileInput").files[0];
+    const btnSubmit = document.getElementById("btnSubmit");
 
     if (!file) {
         alert("Please upload a CSV file first.");
         return;
     }
 
+    // UI Loading State
+    btnSubmit.innerText = "Analyzing Data...";
+    btnSubmit.style.opacity = "0.7";
+    document.getElementById("resultsDashboard").style.display = "none";
+
     const formData = new FormData();
     formData.append("file", file);
 
-    const response = await fetch("/predict", {
-        method: "POST",
-        body: formData
-    });
+    try {
+        const response = await fetch("/predict", {
+            method: "POST",
+            body: formData
+        });
 
-    const result = await response.json();
+        const result = await response.json();
 
-    if (result.error) {
-        alert(result.error);
-        return;
-    }
+        if (result.error) {
+            alert("Error from server: " + result.error);
+            return;
+        }
 
-    // ✅ Show first 24 hours in table
-    let tableHTML = "<table><tr><th>Date-Time</th><th>Predicted Load</th></tr>";
+        // 1. Render Table and Calculate Risk Levels
+        let tableHTML = "";
+        let maxLoad = 0;
 
-    for (let i = 0; i < 24; i++) {
-        tableHTML += "<tr>";
-        tableHTML += "<td>" + result.forecast[i].datetime + "</td>";
-        tableHTML += "<td>" + result.forecast[i].predicted_load.toFixed(4) + "</td>";
-        tableHTML += "</tr>";
-    }
+        for (let i = 0; i < 24; i++) {
+            let loadValue = result.forecast[i].predicted_load;
+            let timeStamp = result.forecast[i].datetime;
+            
+            // Find max load for overall status
+            if(loadValue > maxLoad) maxLoad = loadValue;
 
-    tableHTML += "</table>";
+            // --- THRESHOLD LOGIC (Yahan aap apni marzi ki values set kar sakte hain) ---
+            let statusClass = "safe";
+            let statusText = "Normal";
+            
+            if (loadValue > 80) { // Agar load 80 se zyada ho
+                statusClass = "danger";
+                statusText = "Critical";
+            } else if (loadValue > 50) { // Agar load 50 aur 80 ke darmiyan ho
+                statusClass = "warning";
+                statusText = "Warning";
+            }
 
-    document.getElementById("tableContainer").innerHTML = tableHTML;
+            tableHTML += `<tr>
+                <td>${timeStamp}</td>
+                <td>${loadValue.toFixed(4)}</td>
+                <td><span class="badge ${statusClass}">${statusText}</span></td>
+            </tr>`;
+        }
 
-    // ✅ Show Graph
-    if (result.forecast_graph_base64) {
-        document.getElementById("forecastGraph").src =
-            "data:image/png;base64," + result.forecast_graph_base64;
+        document.getElementById("tableBody").innerHTML = tableHTML;
+
+        // 2. Set Overall System Status based on Max Load
+        const statusCard = document.getElementById("overallStatusCard");
+        const statusText = document.getElementById("overallStatusText");
+        
+        if (maxLoad > 80) {
+            statusCard.style.borderLeft = "4px solid var(--danger)";
+            statusText.className = "badge danger";
+            statusText.innerText = "SYSTEM AT RISK - HIGH LOAD PREDICTED";
+        } else if (maxLoad > 50) {
+            statusCard.style.borderLeft = "4px solid var(--warning)";
+            statusText.className = "badge warning";
+            statusText.innerText = "WARNING - MODERATE LOAD PEAKS";
+        } else {
+            statusCard.style.borderLeft = "4px solid var(--safe)";
+            statusText.className = "badge safe";
+            statusText.innerText = "SYSTEM STABLE - NORMAL LOAD";
+        }
+
+        // 3. Render Base64 Graph
+        if (result.forecast_graph_base64) {
+            document.getElementById("forecastGraph").src = "data:image/png;base64," + result.forecast_graph_base64;
+        }
+
+        // Show Dashboard
+        document.getElementById("resultsDashboard").style.display = "block";
+
+    } catch (error) {
+        alert("Network Error or Server not responding.");
+        console.error(error);
+    } finally {
+        // Reset Button
+        btnSubmit.innerText = "Execute Prediction";
+        btnSubmit.style.opacity = "1";
     }
 }
 </script>
