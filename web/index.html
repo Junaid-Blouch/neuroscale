@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>NeuroScale AI</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+        }
+
+        .container {
+            width: 85%;
+            margin: auto;
+            padding: 40px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .card {
+            background: white;
+            color: black;
+            padding: 25px;
+            border-radius: 10px;
+            margin-top: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        button {
+            padding: 10px 20px;
+            background: #2a5298;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1e3c72;
+        }
+
+        img {
+            width: 100%;
+            margin-top: 20px;
+            border-radius: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 6px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #2a5298;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>NeuroScale AI Weekly Forecast</h1>
+    <p style="text-align:center;">
+        Upload your workload dataset and get 7‑Day Hourly Forecast
+    </p>
+
+    <div class="card">
+        <h3>Upload Workload CSV</h3>
+        <input type="file" id="fileInput">
+        <br><br>
+        <button onclick="send()">Generate Forecast</button>
+    </div>
+
+    <div class="card">
+        <h3>Forecast Summary (First 24 Hours)</h3>
+        <div id="tableContainer"></div>
+    </div>
+
+    <div class="card">
+        <h3>7‑Day Forecast Graph</h3>
+        <img id="forecastGraph" />
+    </div>
+
+</div>
+
+<script>
+async function send() {
+
+    const file = document.getElementById("fileInput").files[0];
+
+    if (!file) {
+        alert("Please upload a CSV file first.");
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await fetch("/predict", {
+        method: "POST",
+        body: formData
+    });
+
+    const result = await response.json();
+
+    if (result.error) {
+        alert(result.error);
+        return;
+    }
+
+    // ✅ Show first 24 hours in table
+    let tableHTML = "<table><tr><th>Date-Time</th><th>Predicted Load</th></tr>";
+
+    for (let i = 0; i < 24; i++) {
+        tableHTML += "<tr>";
+        tableHTML += "<td>" + result.forecast[i].datetime + "</td>";
+        tableHTML += "<td>" + result.forecast[i].predicted_load.toFixed(4) + "</td>";
+        tableHTML += "</tr>";
+    }
+
+    tableHTML += "</table>";
+
+    document.getElementById("tableContainer").innerHTML = tableHTML;
+
+    // ✅ Show Graph
+    if (result.forecast_graph_base64) {
+        document.getElementById("forecastGraph").src =
+            "data:image/png;base64," + result.forecast_graph_base64;
+    }
+}
+</script>
+
+</body>
+</html>
