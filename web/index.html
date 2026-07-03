@@ -22,15 +22,20 @@
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        body {
+body {
             background-color: var(--bg-color);
             color: var(--text-main);
             font-family: 'Inter', sans-serif;
             min-height: 100vh;
             padding: 40px 20px;
+            
             background-image: 
-                radial-gradient(circle at 15% 50%, rgba(0, 255, 204, 0.05), transparent 25%),
-                radial-gradient(circle at 85% 30%, rgba(88, 166, 255, 0.05), transparent 25%);
+                linear-gradient(rgba(5, 5, 5, 0.85), rgba(5, 5, 5, 0.85)), 
+                url('"C:\Users\haseeb\Downloads\pexels-suedadilli-17675996.jpg"'); 
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
         }
 
         .container {
