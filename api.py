@@ -166,7 +166,7 @@ async def predict(
             plt.gca().set_facecolor('#050505')
             plt.gcf().patch.set_facecolor('#050505')
             plt.tick_params(colors='white')
-            plt.grid(color='rgba(255, 255, 255, 0.1)', linestyle='--', alpha=0.5)
+            plt.grid(color='white', linestyle='--', alpha=0.1)
             plt.tight_layout()
 
             buf = io.BytesIO()
