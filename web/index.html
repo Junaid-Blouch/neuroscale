@@ -49,9 +49,7 @@
             z-index: 1;
         }
 
-        /* ========================================== */
-        /* CRAZY MORPHING TITLE BOX CODE       */
-        /* ========================================== */
+        /* Crazy Morphing Title Box */
         .header-panel {
             text-align: center;
             margin-bottom: 50px;
@@ -67,7 +65,7 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            border-radius: 8px; /* Shuru mein standard slight rounded rectangle */
+            border-radius: 8px;
             transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             cursor: pointer;
@@ -75,13 +73,10 @@
             max-width: 90%;
         }
 
-        /* Cursor jate hi shape aur neon light active hogi */
         .title-box:hover {
             border-color: var(--accent-primary);
-            /* Infinite multi-shape morphing animation trigger */
             animation: crazyMorph 6s infinite linear alternate;
-            box-shadow: 0 0 30px var(--accent-glow), 
-                        inset 0 0 20px var(--accent-glow);
+            box-shadow: 0 0 30px var(--accent-glow), inset 0 0 20px var(--accent-glow);
         }
 
         .title-box h1 {
@@ -90,46 +85,20 @@
             color: #fff;
             letter-spacing: -0.5px;
             transition: all 0.4s ease;
-            white-space: nowrap; /* Text ko shrink ya tootne se bachany k liye */
+            white-space: nowrap;
             text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
             z-index: 2;
         }
 
-        .title-box:hover h1 {
-            text-shadow: 0 0 20px var(--accent-primary);
-        }
+        .title-box:hover h1 { text-shadow: 0 0 20px var(--accent-primary); }
 
-        /* Crazy Shapes aur Neon Lights dynamic transitions */
         @keyframes crazyMorph {
-            0% {
-                border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
-                box-shadow: 0 0 25px rgba(0, 255, 204, 0.6), inset 0 0 15px rgba(0, 255, 204, 0.4);
-            }
-            25% {
-                border-radius: 50% 50% 30% 70% / 50% 40% 60% 50%;
-                box-shadow: 0 0 35px rgba(0, 255, 255, 0.7), inset 0 0 20px rgba(0, 255, 255, 0.5);
-            }
-            50% {
-                border-radius: 70% 30% 50% 50% / 40% 60% 40% 60%;
-                box-shadow: 0 0 30px rgba(255, 0, 255, 0.6), inset 0 0 15px rgba(255, 0, 255, 0.4); /* Cyberpunk Pink glow mid-way */
-            }
-            75% {
-                border-radius: 40% 60% 40% 60% / 60% 30% 70% 40%;
-                box-shadow: 0 0 40px rgba(0, 255, 204, 0.8), inset 0 0 25px rgba(0, 255, 204, 0.6);
-            }
-            100% {
-                border-radius: 80% 20% 70% 30% / 30% 70% 30% 70%; /* Perfect fluid circle/box mix */
-                box-shadow: 0 0 30px rgba(0, 255, 150, 0.6), inset 0 0 15px rgba(0, 255, 150, 0.4);
-            }
+            0% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+            50% { border-radius: 70% 30% 50% 50% / 40% 60% 40% 60%; }
+            100% { border-radius: 80% 20% 70% 30% / 30% 70% 30% 70%; }
         }
 
-        .header-panel p { 
-            color: var(--text-muted); 
-            margin-top: 20px; 
-            font-size: 15px;
-            z-index: 1;
-        }
-        /* ========================================== */
+        .header-panel p { color: var(--text-muted); margin-top: 20px; font-size: 15px; }
 
         /* Glassmorphism Cards */
         .card {
@@ -142,6 +111,49 @@
             margin-bottom: 30px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.5);
         }
+
+        /* ========================================== */
+        /* CRAZY STATUS BAR WITH LASER SCANNER       */
+        /* ========================================== */
+        .system-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px !important;
+            font-weight: 600;
+            font-size: 15px;
+            position: relative;
+            overflow: hidden; /* Laser bahar na jaye */
+            background: rgba(6, 6, 9, 0.85) !important;
+            border-left: 4px solid var(--border-color);
+            transition: all 0.5s ease;
+        }
+
+        /* Moving Laser Line */
+        .laser-scanner {
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 30%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 204, 0.25), transparent);
+            animation: laserScan 2.5s infinite linear;
+            pointer-events: none;
+        }
+
+        @keyframes laserScan {
+            0% { left: -30%; }
+            100% { left: 130%; }
+        }
+
+        /* Matrix/Glitch Style Text */
+        #overallStatusText {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            letter-spacing: 1px;
+            transition: all 0.4s ease;
+        }
+        /* ========================================== */
 
         /* Drag & Drop Upload Zone */
         .upload-zone {
@@ -162,9 +174,7 @@
         .upload-icon { font-size: 36px; margin-bottom: 10px; opacity: 0.8; }
         .upload-text { font-size: 14px; color: var(--text-muted); }
         .upload-text span { color: var(--accent-primary); font-weight: 600; }
-        input[type="file"] {
-            position: absolute; width: 100%; height: 100%; top: 0; left: 0; opacity: 0; cursor: pointer;
-        }
+        input[type="file"] { position: absolute; width: 100%; height: 100%; top: 0; left: 0; opacity: 0; cursor: pointer; }
 
         /* Buttons */
         .btn-primary {
@@ -213,7 +223,6 @@
         .badge.warning { background: rgba(251, 191, 36, 0.1); color: var(--warning); border: 1px solid var(--warning); }
         .badge.danger { background: rgba(248, 113, 113, 0.1); color: var(--danger); border: 1px solid var(--danger); box-shadow: 0 0 10px rgba(248, 113, 113, 0.3);}
 
-        .system-status { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; font-weight: 600; font-size: 14px;}
         #errorAlert { display: none; background: rgba(248, 113, 113, 0.1); border: 1px solid var(--danger); color: var(--danger); padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center;}
     </style>
 </head>
@@ -246,8 +255,9 @@
 
         <div id="resultsDashboard">
             <div class="card system-status" id="overallStatusCard">
-                <span style="color: var(--text-muted)">Network Threat & Load Status:</span>
-                <span id="overallStatusText" class="badge">Initializing...</span>
+                <div class="laser-scanner"></div>
+                <span style="color: var(--text-muted); z-index: 1;">NEURAL CORE THREAT ENGINE:</span>
+                <span id="overallStatusText" class="badge" style="z-index: 1;">READY</span>
             </div>
 
             <div class="dashboard-grid">
@@ -270,8 +280,7 @@
                                     <th>Status</th>
                                 </tr>
                             </thead>
-                            <tbody id="tableBody">
-                                </tbody>
+                            <tbody id="tableBody"></tbody>
                         </table>
                     </div>
                 </div>
@@ -280,47 +289,44 @@
     </div>
 
     <script>
-        // === Background Animation Setup (Particles.js) ===
+        // Background Particles
         particlesJS("particles-js", {
             "particles": {
                 "number": { "value": 60, "density": { "enable": true, "value_area": 800 } },
                 "color": { "value": "#00ffcc" },
                 "shape": { "type": "circle" },
-                "opacity": { "value": 0.5, "random": false },
+                "opacity": { "value": 0.5 },
                 "size": { "value": 3, "random": true },
-                "line_linked": {
-                    "enable": true,
-                    "distance": 150,
-                    "color": "#00ffcc",
-                    "opacity": 0.2,
-                    "width": 1
-                },
-                "move": {
-                    "enable": true,
-                    "speed": 2,
-                    "direction": "none",
-                    "random": false,
-                    "straight": false,
-                    "out_mode": "out",
-                    "bounce": false,
-                }
+                "line_linked": { "enable": true, "distance": 150, "color": "#00ffcc", "opacity": 0.2, "width": 1 },
+                "move": { "enable": true, "speed": 2, "out_mode": "out" }
             },
             "interactivity": {
-                "detect_on": "canvas",
-                "events": {
-                    "onhover": { "enable": true, "mode": "grab" },
-                    "onclick": { "enable": true, "mode": "push" },
-                    "resize": true
-                },
-                "modes": {
-                    "grab": { "distance": 140, "line_linked": { "opacity": 0.8 } },
-                    "push": { "particles_nb": 4 }
-                }
-            },
-            "retina_detect": true
+                "events": { "onhover": { "enable": true, "mode": "grab" }, "onclick": { "enable": true, "mode": "push" } },
+                "modes": { "grab": { "distance": 140, "line_linked": { "opacity": 0.8 } } }
+            }
         });
 
-        // === Dashboard Logic ===
+        // Cyberpunk Matrix Text Decoder Function
+        function decodeTextEffect(element, targetText, finalClass) {
+            element.className = `badge ${finalClass}`;
+            const chars = "01XYZ$%#@+=[]{}<>/⚡🤖CORE";
+            let iterations = 0;
+            
+            const interval = setInterval(() => {
+                element.innerText = targetText.split("")
+                    .map((char, index) => {
+                        if (index < iterations) return targetText[index];
+                        return chars[Math.floor(Math.random() * chars.length)];
+                    }).join("");
+                
+                if (iterations >= targetText.length) {
+                    clearInterval(interval);
+                }
+                iterations += 1 / 3; // Speed control
+            }, 30);
+        }
+
+        // Dashboard Elements & Logic
         const fileInput = document.getElementById('fileInput');
         const dropZone = document.getElementById('dropZone');
         const fileNameDisplay = document.getElementById('fileNameDisplay');
@@ -344,14 +350,12 @@
 
         function updateFileName() {
             if (fileInput.files.length > 0) {
-                fileNameDisplay.innerHTML = `<span style="color: #fff;">📁 ${fileInput.files[0].name}</span> attached and ready.`;
-                dropZone.style.borderColor = "var(--accent-primary)";
+                fileNameDisplay.innerHTML = `<span style="color: #fff;">📁 ${fileInput.files[0].name}</span> attached.`;
             }
         }
 
         uploadForm.addEventListener('submit', async function(event) {
             event.preventDefault();
-            
             errorAlert.style.display = "none";
             resultsDashboard.style.display = "none";
             btnSubmit.disabled = true;
@@ -361,17 +365,10 @@
             formData.append("file", fileInput.files[0]);
 
             try {
-                const response = await fetch("/predict", {
-                    method: "POST",
-                    body: formData
-                });
-
+                const response = await fetch("/predict", { method: "POST", body: formData });
                 const result = await response.json();
 
-                if (result.error) {
-                    showError(result.error);
-                    return;
-                }
+                if (result.error) { showError(result.error); return; }
 
                 let tableHTML = "";
                 let maxLoad = 0;
@@ -383,14 +380,9 @@
                     
                     if(loadValue > maxLoad) maxLoad = loadValue;
 
-                    let statusClass = "safe";
-                    let statusText = "Normal";
-                    
-                    if (loadValue > 80) { 
-                        statusClass = "danger"; statusText = "Critical"; 
-                    } else if (loadValue > 50) { 
-                        statusClass = "warning"; statusText = "Warning"; 
-                    }
+                    let statusClass = "safe"; let statusText = "Normal";
+                    if (loadValue > 80) { statusClass = "danger"; statusText = "Critical"; }
+                    else if (loadValue > 50) { statusClass = "warning"; statusText = "Warning"; }
 
                     let actionColor = action === "Increase" ? "#34d399" : (action === "Decrease" ? "#f87171" : "#9ca3af");
 
@@ -404,32 +396,42 @@
 
                 document.getElementById("tableBody").innerHTML = tableHTML;
 
+                // Triggering the smooth dashboard display
+                resultsDashboard.style.display = "block";
+
+                // Triggering the Crazy Cyberpunk Decrypt animation
                 const statusCard = document.getElementById("overallStatusCard");
-                const statusText = document.getElementById("overallStatusText");
+                const statusTextObj = document.getElementById("overallStatusText");
                 
+                let finalStatusText = "";
+                let finalClass = "";
+
                 if (maxLoad > 80) {
                     statusCard.style.borderLeft = "4px solid var(--danger)";
-                    statusText.className = "badge danger";
-                    statusText.innerText = "SYSTEM AT RISK - CRITICAL LOAD PEAKS";
+                    statusCard.style.boxShadow = "0 0 20px rgba(248, 113, 113, 0.2)";
+                    finalStatusText = "CORE SYSTEM AT RISK - CRITICAL OVERLOAD";
+                    finalClass = "danger";
                 } else if (maxLoad > 50) {
                     statusCard.style.borderLeft = "4px solid var(--warning)";
-                    statusText.className = "badge warning";
-                    statusText.innerText = "WARNING - ELEVATED LOAD DETECTED";
+                    statusCard.style.boxShadow = "0 0 20px rgba(251, 191, 36, 0.15)";
+                    finalStatusText = "CORE WARNING - ELEVATED INTENSITY DETECTED";
+                    finalClass = "warning";
                 } else {
                     statusCard.style.borderLeft = "4px solid var(--safe)";
-                    statusText.className = "badge safe";
-                    statusText.innerText = "SYSTEM STABLE - OPTIMAL PERFORMANCE";
+                    statusCard.style.boxShadow = "0 0 20px rgba(52, 211, 153, 0.15)";
+                    finalStatusText = "CORE SYSTEM SECURE - PERFORMANCE OPTIMAL";
+                    finalClass = "safe";
                 }
+
+                // Call matrix decoder function
+                decodeTextEffect(statusTextObj, finalStatusText, finalClass);
 
                 if (result.forecast_graph_base64) {
                     document.getElementById("forecastGraph").src = "data:image/png;base64," + result.forecast_graph_base64;
                 }
 
-                resultsDashboard.style.display = "block";
-
             } catch (error) {
-                showError("Connection lost or server failed to respond. Please verify backend status.");
-                console.error(error);
+                showError("Connection lost or server failed to respond.");
             } finally {
                 btnSubmit.disabled = false;
                 btnSubmit.innerText = "Initialize Model Processing";
