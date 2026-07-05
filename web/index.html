@@ -12,7 +12,7 @@
         :root {
             --accent-primary: #00ffcc;
             --accent-glow: rgba(0, 255, 204, 0.3);
-            --surface-color: rgba(15, 15, 18, 0.65); /* Thora aur transparent taake animation clear dikhe */
+            --surface-color: rgba(15, 15, 18, 0.65);
             --border-color: rgba(255, 255, 255, 0.1);
             --text-main: #f3f4f6;
             --text-muted: #9ca3af;
@@ -29,31 +29,107 @@
             font-family: 'Inter', sans-serif;
             min-height: 100vh;
             padding: 40px 20px;
-            background-color: #050508; /* Deep dark background */
+            background-color: #050508;
             position: relative;
         }
 
-        /* Animated Background Container */
         #particles-js {
             position: fixed;
             width: 100%;
             height: 100%;
             top: 0;
             left: 0;
-            z-index: -1; /* Isko sab se peechay rakhne ke liye */
+            z-index: -1;
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
             position: relative;
-            z-index: 1; /* Content ko aage rakhne ke liye */
+            z-index: 1;
         }
 
-        /* Typography & Headers */
-        .header-panel { text-align: center; margin-bottom: 40px; }
-        .header-panel h1 { font-size: 36px; font-weight: 600; color: #fff; text-shadow: 0 0 15px var(--accent-glow); letter-spacing: -1px;}
-        .header-panel p { color: var(--text-muted); margin-top: 10px; font-size: 15px;}
+        /* ========================================== */
+        /* CRAZY MORPHING TITLE BOX CODE       */
+        /* ========================================== */
+        .header-panel {
+            text-align: center;
+            margin-bottom: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .title-box {
+            background: rgba(10, 10, 12, 0.85);
+            border: 2px solid var(--border-color);
+            padding: 25px 60px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px; /* Shuru mein standard slight rounded rectangle */
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            cursor: pointer;
+            min-width: 400px;
+            max-width: 90%;
+        }
+
+        /* Cursor jate hi shape aur neon light active hogi */
+        .title-box:hover {
+            border-color: var(--accent-primary);
+            /* Infinite multi-shape morphing animation trigger */
+            animation: crazyMorph 6s infinite linear alternate;
+            box-shadow: 0 0 30px var(--accent-glow), 
+                        inset 0 0 20px var(--accent-glow);
+        }
+
+        .title-box h1 {
+            font-size: 38px;
+            font-weight: 600;
+            color: #fff;
+            letter-spacing: -0.5px;
+            transition: all 0.4s ease;
+            white-space: nowrap; /* Text ko shrink ya tootne se bachany k liye */
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            z-index: 2;
+        }
+
+        .title-box:hover h1 {
+            text-shadow: 0 0 20px var(--accent-primary);
+        }
+
+        /* Crazy Shapes aur Neon Lights dynamic transitions */
+        @keyframes crazyMorph {
+            0% {
+                border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+                box-shadow: 0 0 25px rgba(0, 255, 204, 0.6), inset 0 0 15px rgba(0, 255, 204, 0.4);
+            }
+            25% {
+                border-radius: 50% 50% 30% 70% / 50% 40% 60% 50%;
+                box-shadow: 0 0 35px rgba(0, 255, 255, 0.7), inset 0 0 20px rgba(0, 255, 255, 0.5);
+            }
+            50% {
+                border-radius: 70% 30% 50% 50% / 40% 60% 40% 60%;
+                box-shadow: 0 0 30px rgba(255, 0, 255, 0.6), inset 0 0 15px rgba(255, 0, 255, 0.4); /* Cyberpunk Pink glow mid-way */
+            }
+            75% {
+                border-radius: 40% 60% 40% 60% / 60% 30% 70% 40%;
+                box-shadow: 0 0 40px rgba(0, 255, 204, 0.8), inset 0 0 25px rgba(0, 255, 204, 0.6);
+            }
+            100% {
+                border-radius: 80% 20% 70% 30% / 30% 70% 30% 70%; /* Perfect fluid circle/box mix */
+                box-shadow: 0 0 30px rgba(0, 255, 150, 0.6), inset 0 0 15px rgba(0, 255, 150, 0.4);
+            }
+        }
+
+        .header-panel p { 
+            color: var(--text-muted); 
+            margin-top: 20px; 
+            font-size: 15px;
+            z-index: 1;
+        }
+        /* ========================================== */
 
         /* Glassmorphism Cards */
         .card {
@@ -65,7 +141,6 @@
             padding: 30px;
             margin-bottom: 30px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-            transition: transform 0.3s ease;
         }
 
         /* Drag & Drop Upload Zone */
@@ -148,7 +223,9 @@
 
     <div class="container">
         <div class="header-panel">
-            <h1>NeuroScale Engine</h1>
+            <div class="title-box">
+                <h1>NeuroScale Engine</h1>
+            </div>
             <p>Advanced PPO & LSTM Workload Analysis Platform</p>
         </div>
 
@@ -207,7 +284,7 @@
         particlesJS("particles-js", {
             "particles": {
                 "number": { "value": 60, "density": { "enable": true, "value_area": 800 } },
-                "color": { "value": "#00ffcc" }, /* Neon Cyan color */
+                "color": { "value": "#00ffcc" },
                 "shape": { "type": "circle" },
                 "opacity": { "value": 0.5, "random": false },
                 "size": { "value": 3, "random": true },
