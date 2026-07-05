@@ -6,11 +6,13 @@
     <title>NeuroScale AI | Predictive Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
     
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
     <style>
         :root {
             --accent-primary: #00ffcc;
             --accent-glow: rgba(0, 255, 204, 0.3);
-            --surface-color: rgba(15, 15, 18, 0.75);
+            --surface-color: rgba(15, 15, 18, 0.65); /* Thora aur transparent taake animation clear dikhe */
             --border-color: rgba(255, 255, 255, 0.1);
             --text-main: #f3f4f6;
             --text-muted: #9ca3af;
@@ -27,20 +29,25 @@
             font-family: 'Inter', sans-serif;
             min-height: 100vh;
             padding: 40px 20px;
+            background-color: #050508; /* Deep dark background */
+            position: relative;
+        }
 
-            background-image: 
-            linear-gradient(rgba(5, 5, 5, 0.85), rgba(5, 5, 5, 0.90)), 
-            url('/static/bg.jpg');
-            
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            background-repeat: no-repeat;
+        /* Animated Background Container */
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1; /* Isko sab se peechay rakhne ke liye */
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
+            position: relative;
+            z-index: 1; /* Content ko aage rakhne ke liye */
         }
 
         /* Typography & Headers */
@@ -51,8 +58,8 @@
         /* Glassmorphism Cards */
         .card {
             background: var(--surface-color);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border: 1px solid var(--border-color);
             border-radius: 16px;
             padding: 30px;
@@ -132,11 +139,12 @@
         .badge.danger { background: rgba(248, 113, 113, 0.1); color: var(--danger); border: 1px solid var(--danger); box-shadow: 0 0 10px rgba(248, 113, 113, 0.3);}
 
         .system-status { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; font-weight: 600; font-size: 14px;}
-        
         #errorAlert { display: none; background: rgba(248, 113, 113, 0.1); border: 1px solid var(--danger); color: var(--danger); padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center;}
     </style>
 </head>
 <body>
+
+    <div id="particles-js"></div>
 
     <div class="container">
         <div class="header-panel">
@@ -160,7 +168,6 @@
         </div>
 
         <div id="resultsDashboard">
-            
             <div class="card system-status" id="overallStatusCard">
                 <span style="color: var(--text-muted)">Network Threat & Load Status:</span>
                 <span id="overallStatusText" class="badge">Initializing...</span>
@@ -196,7 +203,47 @@
     </div>
 
     <script>
-        // DOM Elements
+        // === Background Animation Setup (Particles.js) ===
+        particlesJS("particles-js", {
+            "particles": {
+                "number": { "value": 60, "density": { "enable": true, "value_area": 800 } },
+                "color": { "value": "#00ffcc" }, /* Neon Cyan color */
+                "shape": { "type": "circle" },
+                "opacity": { "value": 0.5, "random": false },
+                "size": { "value": 3, "random": true },
+                "line_linked": {
+                    "enable": true,
+                    "distance": 150,
+                    "color": "#00ffcc",
+                    "opacity": 0.2,
+                    "width": 1
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 2,
+                    "direction": "none",
+                    "random": false,
+                    "straight": false,
+                    "out_mode": "out",
+                    "bounce": false,
+                }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": { "enable": true, "mode": "grab" },
+                    "onclick": { "enable": true, "mode": "push" },
+                    "resize": true
+                },
+                "modes": {
+                    "grab": { "distance": 140, "line_linked": { "opacity": 0.8 } },
+                    "push": { "particles_nb": 4 }
+                }
+            },
+            "retina_detect": true
+        });
+
+        // === Dashboard Logic ===
         const fileInput = document.getElementById('fileInput');
         const dropZone = document.getElementById('dropZone');
         const fileNameDisplay = document.getElementById('fileNameDisplay');
@@ -205,7 +252,6 @@
         const resultsDashboard = document.getElementById('resultsDashboard');
         const errorAlert = document.getElementById('errorAlert');
 
-        // Drag & Drop Functionality
         dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
         dropZone.addEventListener('dragleave', () => { dropZone.classList.remove('dragover'); });
         dropZone.addEventListener('drop', (e) => {
@@ -226,11 +272,9 @@
             }
         }
 
-        // Form Submission & API Call
         uploadForm.addEventListener('submit', async function(event) {
             event.preventDefault();
             
-            // Reset UI States
             errorAlert.style.display = "none";
             resultsDashboard.style.display = "none";
             btnSubmit.disabled = true;
@@ -240,7 +284,6 @@
             formData.append("file", fileInput.files[0]);
 
             try {
-                // Sending request to FastAPI backend
                 const response = await fetch("/predict", {
                     method: "POST",
                     body: formData
@@ -248,18 +291,14 @@
 
                 const result = await response.json();
 
-                // If Backend throws an explicit error
                 if (result.error) {
                     showError(result.error);
                     return;
                 }
 
-                // --- DATA PROCESSING & UI UPDATES --- //
-                
                 let tableHTML = "";
                 let maxLoad = 0;
 
-                // Process first 24 hours for the table
                 for (let i = 0; i < 24; i++) {
                     let loadValue = result.forecast[i].predicted_load;
                     let timeStamp = result.forecast[i].datetime;
@@ -267,7 +306,6 @@
                     
                     if(loadValue > maxLoad) maxLoad = loadValue;
 
-                    // Threshold Logic
                     let statusClass = "safe";
                     let statusText = "Normal";
                     
@@ -277,7 +315,6 @@
                         statusClass = "warning"; statusText = "Warning"; 
                     }
 
-                    // Format PPO action color
                     let actionColor = action === "Increase" ? "#34d399" : (action === "Decrease" ? "#f87171" : "#9ca3af");
 
                     tableHTML += `<tr>
@@ -290,7 +327,6 @@
 
                 document.getElementById("tableBody").innerHTML = tableHTML;
 
-                // Update Overall Status Banner
                 const statusCard = document.getElementById("overallStatusCard");
                 const statusText = document.getElementById("overallStatusText");
                 
@@ -308,19 +344,16 @@
                     statusText.innerText = "SYSTEM STABLE - OPTIMAL PERFORMANCE";
                 }
 
-                // Render the Graph
                 if (result.forecast_graph_base64) {
                     document.getElementById("forecastGraph").src = "data:image/png;base64," + result.forecast_graph_base64;
                 }
 
-                // Show the dashboard smoothly
                 resultsDashboard.style.display = "block";
 
             } catch (error) {
                 showError("Connection lost or server failed to respond. Please verify backend status.");
                 console.error(error);
             } finally {
-                // Restore button
                 btnSubmit.disabled = false;
                 btnSubmit.innerText = "Initialize Model Processing";
             }
