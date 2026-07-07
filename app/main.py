@@ -63,28 +63,47 @@ def read_root():
 # ==========================================
 # FRONTEND ROUTING (Bulletproof Dual-Check)
 # ==========================================
+# ==========================================
+# FRONTEND ROUTING (Ultimate Auto-Discovery)
+# ==========================================
 @app.get("/")
 def read_root():
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    import os
+    from fastapi.responses import HTMLResponse, FileResponse
     
-    # Path 1: Check inside the 'web' folder
-    path_web = os.path.join(BASE_DIR, "web", "index.html")
-    # Path 2: Check in the main root folder
-    path_root = os.path.join(BASE_DIR, "index.html")
+    # 1. Get the current working directory of Hugging Face (/code)
+    base_dir = os.getcwd() 
+    found_path = None
     
-    # Dual-Check Logic
-    if os.path.exists(path_web):
-        return FileResponse(path_web)
-    elif os.path.exists(path_root):
-        return FileResponse(path_root)
+    # 2. Scan every single folder in the project to find index.html
+    for root, dirs, files in os.walk(base_dir):
+        # Ignore system folders to speed up the search
+        if '.git' in root or '__pycache__' in root or 'venv' in root or '.local' in root:
+            continue
+        for file in files:
+            # .lower() fixes Windows/Linux case sensitivity issues (e.g., Index.html vs index.html)
+            if file.lower() == "index.html": 
+                found_path = os.path.join(root, file)
+                break
+        if found_path:
+            break
+            
+    # 3. If file is found ANYWHERE, serve it immediately!
+    if found_path:
+        return FileResponse(found_path)
+        
+    # 4. If file is TRULY missing from the cloud, print the server's exact folder tree
+    tree_html = f"<h2>Error: index.html is completely missing from the cloud server!</h2>"
+    tree_html += f"<p>Here is what the server actually sees inside <b>{base_dir}</b>:</p><ul>"
     
-    # If both fail
-    error_html = f"""
-    <h1>Error: index.html not found anywhere!</h1>
-    <p>System checked both of these locations but found nothing:</p>
-    <ul>
-        <li><b>{path_web}</b></li>
-        <li><b>{path_root}</b></li>
-    </ul>
-    """
-    return HTMLResponse(content=error_html, status_code=404)
+    for root, dirs, files in os.walk(base_dir):
+        if '.git' in root or '__pycache__' in root or 'venv' in root or '.local' in root: 
+            continue
+        tree_html += f"<li><b style='color: blue;'>{root}</b><ul>"
+        for f in files: 
+            tree_html += f"<li>{f}</li>"
+        tree_html += "</ul></li>"
+        
+    tree_html += "</ul><p>Please check your .gitignore file or drag-and-drop index.html directly to Hugging Face.</p>"
+    
+    return HTMLResponse(content=tree_html, status_code=404)
