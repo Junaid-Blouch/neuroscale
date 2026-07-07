@@ -26,11 +26,13 @@ class NeuroScaleLSTM(nn.Module):
         super(NeuroScaleLSTM, self).__init__()
         self.hidden_layer_size = hidden_layer_size
         self.lstm = nn.LSTM(input_size, hidden_layer_size, batch_first=True)
-        self.linear = nn.Linear(hidden_layer_size, output_size)
+        # 'linear' ko 'fc' se replace kar diya gaya hai
+        self.fc = nn.Linear(hidden_layer_size, output_size) 
 
     def forward(self, input_seq):
         lstm_out, _ = self.lstm(input_seq)
-        predictions = self.linear(lstm_out[:, -1, :])
+        # Yahan bhi 'fc' call hoga
+        predictions = self.fc(lstm_out[:, -1, :]) 
         return predictions
 
 # ==========================================
