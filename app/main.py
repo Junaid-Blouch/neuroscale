@@ -57,4 +57,20 @@ def read_root():
     <p>System is looking for the file exactly at: <b>{file_path}</b></p>
     <p>Please make sure 'index.html' is uploaded to the main root folder of your repository.</p>
     """
+    return HTMLResponse(content=error_html, status_code=404)# ==========================================
+# FRONTEND ROUTING (Updated for 'web' folder)
+# ==========================================
+@app.get("/")
+def read_root():
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    # Yahan humne code ko bataya ke file 'web' folder ke andar hai
+    file_path = os.path.join(BASE_DIR, "web", "index.html")
+    
+    if os.path.exists(file_path):
+        return FileResponse(file_path)
+    
+    error_html = f"""
+    <h1>Error: index.html not found!</h1>
+    <p>System is looking for the file exactly at: <b>{file_path}</b></p>
+    """
     return HTMLResponse(content=error_html, status_code=404)
