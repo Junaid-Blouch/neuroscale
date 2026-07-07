@@ -272,10 +272,12 @@
             const formData = new FormData(); formData.append("file", fileInput.files[0]);
 
             try {
-                const response = await fetch("/predict", { method: "POST", body: formData });
-                const result = await response.json();
-                if (result.error) { showError(result.error); return; }
-
+                const response = await fetch("/api/v1/reports/predict", { method: "POST", body: formData });
+            const result = await response.json();
+            if (result.error) { 
+            showError(result.error); 
+            return; 
+}
                 let tableHTML = ""; let maxLoad = 0;
 
                 for (let i = 0; i < 24; i++) {
