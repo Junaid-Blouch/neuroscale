@@ -17,6 +17,22 @@ import joblib
 
 router = APIRouter()
 
+# 1. Apni LSTM Model ki class yahan define karein (ya import karein)
+import torch.nn as nn
+
+# NOTE: Is class ke andar wohi architecture likhein jo aapne training script mein use kiya tha
+class NeuroScaleLSTM(nn.Module):
+    def __init__(self, input_size=3, hidden_layer_size=64, output_size=1):
+        super(NeuroScaleLSTM, self).__init__()
+        self.hidden_layer_size = hidden_layer_size
+        self.lstm = nn.LSTM(input_size, hidden_layer_size, batch_first=True)
+        self.linear = nn.Linear(hidden_layer_size, output_size)
+
+    def forward(self, input_seq):
+        lstm_out, _ = self.lstm(input_seq)
+        predictions = self.linear(lstm_out[:, -1, :])
+        return predictions
+
 # ==========================================
 # GLOBAL MODEL CACHE (Loaded once for speed)
 # ==========================================
@@ -30,9 +46,19 @@ class AI_Engine:
         if not self.is_loaded:
             print("🧠 Loading NeuroScale Neural Models into memory...")
             try:
-                self.lstm_model = torch.load("models/trained_lstm.pth")
+                # 1. Pehle Model ka khali structure (dancha) banayen
+                # (Zaroori: input_size aur hidden_layer_size apne trained model ke mutabiq set karein)
+                self.lstm_model = NeuroScaleLSTM(input_size=3, hidden_layer_size=64) 
+                
+                # 2. Ab us structure ke andar weights (state_dict) load karein
+                self.lstm_model.load_state_dict(torch.load("models/trained_lstm.pth"))
+                
+                # 3. Model ko evaluation mode mein set karein
                 self.lstm_model.eval() 
+                
+                # PPO Agent load karein
                 self.ppo_agent = PPO.load("models/ppo_cloud_agent.zip")
+                
                 self.is_loaded = True
                 print("✅ Models Loaded Successfully!")
             except Exception as e:
@@ -40,7 +66,6 @@ class AI_Engine:
 
 ai_engine = AI_Engine()
 ai_engine.load_models()
-
 # ==========================================
 # [NEW] BACKGROUND TASK FUNCTION
 # ==========================================
