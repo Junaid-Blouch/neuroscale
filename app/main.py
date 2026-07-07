@@ -60,17 +60,31 @@ def read_root():
     return HTMLResponse(content=error_html, status_code=404)# ==========================================
 # FRONTEND ROUTING (Updated for 'web' folder)
 # ==========================================
+# ==========================================
+# FRONTEND ROUTING (Bulletproof Dual-Check)
+# ==========================================
 @app.get("/")
 def read_root():
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    # Yahan humne code ko bataya ke file 'web' folder ke andar hai
-    file_path = os.path.join(BASE_DIR, "web", "index.html")
     
-    if os.path.exists(file_path):
-        return FileResponse(file_path)
+    # Path 1: Check inside the 'web' folder
+    path_web = os.path.join(BASE_DIR, "web", "index.html")
+    # Path 2: Check in the main root folder
+    path_root = os.path.join(BASE_DIR, "index.html")
     
+    # Dual-Check Logic
+    if os.path.exists(path_web):
+        return FileResponse(path_web)
+    elif os.path.exists(path_root):
+        return FileResponse(path_root)
+    
+    # If both fail
     error_html = f"""
-    <h1>Error: index.html not found!</h1>
-    <p>System is looking for the file exactly at: <b>{file_path}</b></p>
+    <h1>Error: index.html not found anywhere!</h1>
+    <p>System checked both of these locations but found nothing:</p>
+    <ul>
+        <li><b>{path_web}</b></li>
+        <li><b>{path_root}</b></li>
+    </ul>
     """
     return HTMLResponse(content=error_html, status_code=404)
