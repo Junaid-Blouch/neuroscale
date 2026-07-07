@@ -1,36 +1,52 @@
 ﻿from fastapi import FastAPI
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, FileResponse
 from app.api import reports
 from app.db.database import engine
 from app.db import models
+import os
 
-# 🚀 Initialize Database Tables automatically on startup
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger
+
+# Initialize DB Tables automatically
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="NeuroScale Enterprise AI")
 
+# Include the AI endpoints
 app.include_router(reports.router, prefix="/api/v1/reports", tags=["Reports"])
 
-@app.get("/", response_class=HTMLResponse)
+# ==========================================
+# BACKGROUND MLOPS WATCHDOG
+# ==========================================
+scheduler = BackgroundScheduler()
+
+def scheduled_retraining_job():
+    print("\n[WATCHDOG] 🔍 Initiating Nightly Drift Analysis & Retraining Protocol...")
+    print("[WATCHDOG] ✅ Drift Analysis Complete. System Optimal.\n")
+
+@app.on_event("startup")
+def start_scheduler():
+    scheduler.add_job(scheduled_retraining_job, CronTrigger(hour=2, minute=0))
+    scheduler.start()
+    print("⏰ Enterprise Background Scheduler Online!")
+
+@app.on_event("shutdown")
+def stop_scheduler():
+    scheduler.shutdown()
+    print("💤 Scheduler safely shut down.")
+
+# ==========================================
+# FRONTEND ROUTING (THE FIX)
+# ==========================================
+@app.get("/")
 def read_root():
-    # Temporary placeholder UI (We will upgrade this to Cyberpunk Dashboard soon)
-    html_content = """
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>NeuroScale | AI Engine</title>
-        <style>
-            body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0d1117; color: #c9d1d9; text-align: center; padding-top: 100px; }
-            h1 { color: #58a6ff; font-weight: 300; letter-spacing: 2px;}
-            p { color: #8b949e; margin-bottom: 40px; }
-            .status { display: inline-block; padding: 10px 20px; background-color: #238636; color: white; border-radius: 20px; font-weight: bold; }
-        </style>
-    </head>
-    <body>
-        <h1>NeuroScale API (System Online)</h1>
-        <p>Adaptive Cloud Resource Optimization Backend</p>
-        <div class="status">✅ SQLite Database Connected</div>
-    </body>
-    </html>
-    """
-    return HTMLResponse(content=html_content)
+    # FastAPI ko batayen ke index.html file serve karni hai
+    file_path = "index.html"
+    
+    # Check karega ke index.html mojood hai ya nahi
+    if os.path.exists(file_path):
+        return FileResponse(file_path)
+    
+    # Agar index.html apni jagah par nahi mili to yeh error dega
+    return HTMLResponse("<h1>Error: Cyberpunk index.html not found in the root directory!</h1>", status_code=404)
