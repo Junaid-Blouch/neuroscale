@@ -3,334 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NeuroScale AI | Predictive Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-
+    <title>NeuroScale AI Engine</title>
     <style>
-        :root {
-            --accent-primary: #00ffcc;
-            --accent-glow: rgba(0, 255, 204, 0.3);
-            --surface-color: rgba(15, 15, 18, 0.7);
-            --border-color: rgba(255, 255, 255, 0.1);
-            --text-main: #f3f4f6;
-            --text-muted: #9ca3af;
-            
-            --safe: #34d399;
-            --warning: #fbbf24;
-            --danger: #f87171;
-            
-            /* Dynamic variable for Table snake border */
-            --dynamic-border-color: #00ffcc; 
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
+        /* Modern Dark/Futuristic Styling */
         body {
-            color: var(--text-main);
-            font-family: 'Inter', sans-serif;
-            min-height: 100vh;
-            padding: 40px 20px;
-            background-color: #050508;
-            position: relative;
+            background-color: #0d1117;
+            color: #00ffcc;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
         }
-
-        #particles-js { position: fixed; width: 100%; height: 100%; top: 0; left: 0; z-index: -1; }
-        .container { max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
-
-        /* Morphing Title Box */
-        .header-panel { text-align: center; margin-bottom: 50px; display: flex; flex-direction: column; align-items: center; }
-        .title-box { background: rgba(10, 10, 12, 0.85); border: 2px solid var(--border-color); padding: 25px 60px; display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; min-width: 400px; }
-        .title-box:hover { border-color: var(--accent-primary); animation: crazyMorph 6s infinite linear alternate; box-shadow: 0 0 30px var(--accent-glow), inset 0 0 20px var(--accent-glow); }
-        .title-box h1 { font-size: 38px; font-weight: 600; color: #fff; text-shadow: 0 0 10px rgba(255, 255, 255, 0.3); z-index: 2; white-space: nowrap;}
-        .title-box:hover h1 { text-shadow: 0 0 20px var(--accent-primary); }
-        @keyframes crazyMorph {
-            0% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
-            50% { border-radius: 70% 30% 50% 50% / 40% 60% 40% 60%; }
-            100% { border-radius: 80% 20% 70% 30% / 30% 70% 30% 70%; }
+        .container {
+            background: #161b22;
+            border: 1px solid #00ffcc;
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.2);
+            padding: 40px;
+            border-radius: 10px;
+            text-align: center;
+            width: 80%;
+            max-width: 600px;
         }
-        .header-panel p { color: var(--text-muted); margin-top: 20px; }
-
-        /* ========================================== */
-        /* EFFECT 3: 3D Holographic Tilt (Upload Box) */
-        /* ========================================== */
-        .upload-card {
-            background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 16px; padding: 30px; margin-bottom: 30px;
-            transform-style: preserve-3d; transition: transform 0.1s ease; position: relative; overflow: hidden;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+        h1 {
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 5px #00ffcc;
+            margin-bottom: 5px;
         }
-        .upload-glare {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;
-            background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.1), transparent 50%);
-            opacity: 0; transition: opacity 0.3s ease; z-index: 10;
+        p {
+            color: #8b949e;
+            margin-bottom: 30px;
         }
-        .upload-zone { border: 2px dashed rgba(255, 255, 255, 0.2); border-radius: 12px; padding: 40px 20px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: rgba(0,0,0,0.4); position: relative; margin-bottom: 20px; transform: translateZ(30px); }
-        .upload-zone:hover { border-color: var(--accent-primary); background: rgba(0, 255, 204, 0.05); }
-        .upload-icon { font-size: 36px; margin-bottom: 10px; opacity: 0.8; }
-        .upload-text { font-size: 14px; color: var(--text-muted); }
-        .upload-text span { color: var(--accent-primary); font-weight: 600; }
-        input[type="file"] { position: absolute; width: 100%; height: 100%; top: 0; left: 0; opacity: 0; cursor: pointer; }
-        .btn-primary { width: 100%; background: linear-gradient(135deg, rgba(0, 255, 204, 0.15), transparent); border: 1px solid var(--accent-primary); color: var(--accent-primary); padding: 15px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s; transform: translateZ(20px);}
-        .btn-primary:hover { background: var(--accent-primary); color: #000; box-shadow: 0 0 20px var(--accent-glow); }
-
-        #resultsDashboard { display: none; }
-        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
-        @media (max-width: 900px) { .dashboard-grid { grid-template-columns: 1fr; } }
-
-        /* ========================================== */
-        /* EFFECT 1 & 2: Decode + Heartbeat Pulse     */
-        /* ========================================== */
-        .status-card {
-            background: rgba(6, 6, 9, 0.85); border: 1px solid var(--border-color); border-radius: 12px;
-            display: flex; justify-content: space-between; align-items: center; padding: 20px 30px; font-weight: 600; margin-bottom: 30px;
-            transition: all 0.3s ease;
+        input[type="file"] {
+            margin: 20px 0;
+            color: #fff;
+            padding: 10px;
+            border: 1px dashed #00ffcc;
+            background: #000;
+            width: 90%;
         }
-        /* Pulse Animations based on Status */
-        .pulse-safe { animation: heartbeatSafe 2s infinite; border-color: var(--safe); }
-        .pulse-warning { animation: heartbeatWarning 1.5s infinite; border-color: var(--warning); }
-        .pulse-danger { animation: heartbeatDanger 0.8s infinite; border-color: var(--danger); }
-        
-        @keyframes heartbeatSafe { 0% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.4); } 70% { box-shadow: 0 0 15px 10px rgba(52, 211, 153, 0); } 100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); } }
-        @keyframes heartbeatWarning { 0% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.5); } 70% { box-shadow: 0 0 20px 15px rgba(251, 191, 36, 0); } 100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0); } }
-        @keyframes heartbeatDanger { 0% { box-shadow: 0 0 0 0 rgba(248, 113, 113, 0.7); } 50% { box-shadow: 0 0 30px 20px rgba(248, 113, 113, 0); } 100% { box-shadow: 0 0 0 0 rgba(248, 113, 113, 0); } }
-
-        /* Glitch Effect CSS */
-        .glitch-text { animation: glitchAnim 0.3s linear infinite; color: var(--danger); text-shadow: 2px 0 var(--accent-primary), -2px 0 #ff00ff; }
-        @keyframes glitchAnim { 0% { transform: translate(0) } 20% { transform: translate(-2px, 1px) } 40% { transform: translate(-1px, -1px) } 60% { transform: translate(2px, 1px) } 80% { transform: translate(1px, -1px) } 100% { transform: translate(0) } }
-
-        /* ========================================== */
-        /* EFFECT 4: Laser Scan (Graph Box)           */
-        /* ========================================== */
-        .graph-card {
-            background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 16px; padding: 25px;
-            position: relative; overflow: hidden; /* Laser stays inside */
+        button {
+            background-color: transparent;
+            color: #00ffcc;
+            border: 1px solid #00ffcc;
+            padding: 12px 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+            font-weight: bold;
+            width: 100%;
         }
-        .graph-laser {
-            position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 255, 204, 0.4), transparent);
-            animation: laserSweep 3s infinite linear; pointer-events: none; z-index: 5;
+        button:hover {
+            background-color: #00ffcc;
+            color: #000;
+            box-shadow: 0 0 15px #00ffcc;
         }
-        @keyframes laserSweep { 0% { left: -100%; } 100% { left: 200%; } }
-        .graph-container img { width: 100%; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); position: relative; z-index: 2; }
-
-        /* ========================================== */
-        /* EFFECT 5: Neon Marquee Snake (Table Box)   */
-        /* ========================================== */
-        .table-card-wrapper {
-            position: relative; padding: 3px; border-radius: 16px; overflow: hidden; background: transparent;
+        #resultBox {
+            margin-top: 25px;
+            padding: 15px;
+            background: #010409;
+            border: 1px solid #444;
+            color: #fff;
+            min-height: 80px;
+            white-space: pre-wrap;
+            text-align: left;
+            font-size: 14px;
+            overflow-x: auto;
         }
-        /* The Spinning Neon Snake Gradient */
-        .table-card-wrapper::before {
-            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-            background: conic-gradient(transparent, transparent, transparent, var(--dynamic-border-color));
-            animation: spinBorder 4s linear infinite; z-index: 0;
-        }
-        @keyframes spinBorder { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
-        .table-card-inner {
-            background: var(--surface-color); border-radius: 14px; padding: 25px; position: relative; z-index: 1; height: 100%;
-        }
-
-        .table-container { max-height: 350px; overflow-y: auto; padding-right: 5px; }
-        .table-container::-webkit-scrollbar { width: 6px; }
-        .table-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
-        table { width: 100%; border-collapse: collapse; font-family: 'JetBrains Mono', monospace; font-size: 13px; }
-        th { background: rgba(0,0,0,0.6); color: var(--text-muted); padding: 12px; text-align: left; position: sticky; top: 0; z-index: 2;}
-        td { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #fff; }
-        tr:hover td { background: rgba(255,255,255,0.05); }
-
-        .badge { padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
-        .badge.safe { background: rgba(52, 211, 153, 0.1); color: var(--safe); border: 1px solid var(--safe); }
-        .badge.warning { background: rgba(251, 191, 36, 0.1); color: var(--warning); border: 1px solid var(--warning); }
-        .badge.danger { background: rgba(248, 113, 113, 0.1); color: var(--danger); border: 1px solid var(--danger); }
-        #errorAlert { display: none; background: rgba(248, 113, 113, 0.1); border: 1px solid var(--danger); color: var(--danger); padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center;}
+        .error-text { color: #ff3366; font-weight: bold; }
+        .success-text { color: #00ffcc; font-weight: bold; }
+        .processing-text { color: #f0e68c; }
     </style>
 </head>
 <body>
 
-    <div id="particles-js"></div>
-
     <div class="container">
-        <div class="header-panel">
-            <div class="title-box">
-                <h1>NeuroScale Engine</h1>
-            </div>
-            <p>Advanced PPO & LSTM Workload Analysis Platform</p>
-        </div>
+        <h1>NeuroScale Engine</h1>
+        <p>Advanced PPO & LSTM Workload Analysis Platform</p>
+        
+        <form id="uploadForm">
+            <input type="file" id="csvFile" accept=".csv" required>
+            <br><br>
+            <button type="submit" id="submitBtn">Initialize Analysis</button>
+        </form>
 
-        <div id="errorAlert"></div>
-
-        <div class="upload-card" id="uploadCard">
-            <div class="upload-glare" id="uploadGlare"></div>
-            <form id="uploadForm">
-                <div class="upload-zone" id="dropZone">
-                    <div class="upload-icon">📊</div>
-                    <div class="upload-text" id="fileNameDisplay">Drag & drop your CSV workload file here or <span>browse</span></div>
-                    <input type="file" id="fileInput" accept=".csv" required>
-                </div>
-                <button type="submit" class="btn-primary" id="btnSubmit">Initialize Model Processing</button>
-            </form>
-        </div>
-
-        <div id="resultsDashboard">
-            
-            <div class="status-card" id="overallStatusCard">
-                <span style="color: var(--text-muted);">NEURAL CORE THREAT ENGINE:</span>
-                <span id="overallStatusText" style="font-family: 'JetBrains Mono'; font-size: 14px;">PROCESSING...</span>
-            </div>
-
-            <div class="dashboard-grid">
-                
-                <div class="graph-card">
-                    <div class="graph-laser"></div> <h3 style="margin-bottom: 20px; color: var(--accent-primary);">Prediction Trajectory</h3>
-                    <div class="graph-container"><img id="forecastGraph" alt="AI Generated Graph" /></div>
-                </div>
-
-                <div class="table-card-wrapper">
-                    <div class="table-card-inner">
-                        <h3 style="margin-bottom: 20px; color: var(--accent-primary);">Live Telemetry & Actions</h3>
-                        <div class="table-container">
-                            <table id="dataTable">
-                                <thead>
-                                    <tr><th>Timestamp</th><th>Workload</th><th>PPO Action</th><th>Status</th></tr>
-                                </thead>
-                                <tbody id="tableBody"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
+        <div id="resultBox">System Ready. Awaiting workload.csv input...</div>
     </div>
 
     <script>
-        // Background Particles
-        particlesJS("particles-js", {
-            "particles": { "number": { "value": 70 }, "color": { "value": "#00ffcc" }, "shape": { "type": "circle" }, "opacity": { "value": 0.5 }, "size": { "value": 2 }, "line_linked": { "enable": true, "distance": 150, "color": "#00ffcc", "opacity": 0.2, "width": 1 }, "move": { "enable": true, "speed": 1.5 } },
-            "interactivity": { "events": { "onhover": { "enable": true, "mode": "grab" } }, "modes": { "grab": { "distance": 140, "line_linked": { "opacity": 0.8 } } } }
-        });
-
-        // 3D Holographic Tilt Logic
-        const uploadCard = document.getElementById('uploadCard');
-        const glare = document.getElementById('uploadGlare');
-        
-        uploadCard.addEventListener('mousemove', (e) => {
-            const rect = uploadCard.getBoundingClientRect();
-            const x = e.clientX - rect.left; const y = e.clientY - rect.top;
-            const centerX = rect.width / 2; const centerY = rect.height / 2;
-            const tiltX = (y - centerY) / 20; const tiltY = (centerX - x) / 20;
+        document.getElementById('uploadForm').addEventListener('submit', async function(event) {
+            event.preventDefault(); // Page reload ko roknay ke liye
             
-            uploadCard.style.transform = `perspective(1000px) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
-            glare.style.opacity = '1';
-            glare.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(255,255,255,0.15), transparent 40%)`;
-        });
-        uploadCard.addEventListener('mouseleave', () => {
-            uploadCard.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg)`;
-            glare.style.opacity = '0';
-        });
+            const fileInput = document.getElementById('csvFile');
+            const resultBox = document.getElementById('resultBox');
+            const submitBtn = document.getElementById('submitBtn');
 
-        // Cyberpunk Decoder Logic
-        function decodeText(element, finalString, isCritical) {
-            const chars = "01XYZ$%#@+=⚡🤖CORE";
-            let iterations = 0;
-            element.classList.remove('glitch-text'); // Remove old glitch
-            
-            const interval = setInterval(() => {
-                element.innerText = finalString.split("").map((char, index) => {
-                    if (index < iterations) return finalString[index];
-                    return chars[Math.floor(Math.random() * chars.length)];
-                }).join("");
-                
-                if (iterations >= finalString.length) {
-                    clearInterval(interval);
-                    // Apply glitch effect only if danger
-                    if (isCritical) element.classList.add('glitch-text');
-                }
-                iterations += 1/3;
-            }, 30);
-        }
+            // 1. Check if file is selected
+            if (fileInput.files.length === 0) {
+                resultBox.innerHTML = "<span class='error-text'>⚠️ Error: Please upload a CSV file first.</span>";
+                return;
+            }
 
-        // Upload Logic
-        const fileInput = document.getElementById('fileInput');
-        const dropZone = document.getElementById('dropZone');
-        const fileNameDisplay = document.getElementById('fileNameDisplay');
-        const uploadForm = document.getElementById('uploadForm');
-        const btnSubmit = document.getElementById('btnSubmit');
-        const resultsDashboard = document.getElementById('resultsDashboard');
-        const errorAlert = document.getElementById('errorAlert');
+            // 2. Prepare data for API
+            const formData = new FormData();
+            formData.append("file", fileInput.files[0]);
 
-        fileInput.addEventListener('change', () => {
-            if (fileInput.files.length > 0) fileNameDisplay.innerHTML = `<span style="color: #fff;">📁 ${fileInput.files[0].name}</span> attached.`;
-        });
-
-        uploadForm.addEventListener('submit', async function(event) {
-            event.preventDefault();
-            errorAlert.style.display = "none"; resultsDashboard.style.display = "none";
-            btnSubmit.disabled = true; btnSubmit.innerText = "Analyzing Neural Data...";
-
-            const formData = new FormData(); formData.append("file", fileInput.files[0]);
+            // 3. Update UI to show processing state
+            resultBox.innerHTML = "<span class='processing-text'>🧠 Processing data through Neural Models... Please wait.</span>";
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Analyzing...";
 
             try {
-                const response = await fetch("/api/v1/reports/predict", { method: "POST", body: formData });
-            const result = await response.json();
-            if (result.error) { 
-            showError(result.error); 
-            return; 
-}
-                let tableHTML = ""; let maxLoad = 0;
+                // 4. THE ONLY API CALL (100% Correct Path)
+                const response = await fetch('/api/v1/reports/predict', {
+                    method: 'POST',
+                    body: formData
+                });
 
-                for (let i = 0; i < 24; i++) {
-                    let load = result.forecast[i].predicted_load;
-                    let action = result.forecast[i].action;
-                    if(load > maxLoad) maxLoad = load;
-
-                    let statusClass = "safe"; let statusText = "Normal";
-                    if (load > 80) { statusClass = "danger"; statusText = "Critical"; }
-                    else if (load > 50) { statusClass = "warning"; statusText = "Warning"; }
-
-                    let actColor = action === "Increase" ? "#34d399" : (action === "Decrease" ? "#f87171" : "#9ca3af");
-
-                    tableHTML += `<tr><td>${result.forecast[i].datetime}</td><td><b>${load.toFixed(4)}</b></td><td style="color: ${actColor};">${action}</td><td><span class="badge ${statusClass}">${statusText}</span></td></tr>`;
+                // 5. Check if server crashed
+                if (!response.ok) {
+                    throw new Error(`Server returned status ${response.status}`);
                 }
-                document.getElementById("tableBody").innerHTML = tableHTML;
 
-                // Handle Effect 1 & 2 (Pulse & Decode) + Effect 5 Color update
-                const statusCard = document.getElementById("overallStatusCard");
-                const statusText = document.getElementById("overallStatusText");
+                // 6. Parse JSON result
+                const result = await response.json();
                 
-                // Reset Pulse Classes
-                statusCard.className = "status-card"; 
-
-                let finalTxt = ""; let isCritical = false;
-
-                if (maxLoad > 80) {
-                    statusCard.classList.add("pulse-danger");
-                    finalTxt = "[ CRITICAL OVERLOAD DETECTED ]";
-                    isCritical = true;
-                    document.documentElement.style.setProperty('--dynamic-border-color', '#f87171'); // Red Snake Border
-                } else if (maxLoad > 50) {
-                    statusCard.classList.add("pulse-warning");
-                    finalTxt = "[ WARNING - ELEVATED LOAD ]";
-                    document.documentElement.style.setProperty('--dynamic-border-color', '#fbbf24'); // Yellow Snake Border
+                // 7. Display Results
+                if (result.error) {
+                    resultBox.innerHTML = `<span class='error-text'>⚠️ Engine Error: ${result.error}</span>`;
                 } else {
-                    statusCard.classList.add("pulse-safe");
-                    finalTxt = "[ SYSTEM SECURE & OPTIMAL ]";
-                    document.documentElement.style.setProperty('--dynamic-border-color', '#34d399'); // Green Snake Border
+                    // Agar report successfully generate ho gayi to JSON print karega
+                    resultBox.innerHTML = `<span class='success-text'>✅ Analysis Complete!</span>\n\n` + JSON.stringify(result, null, 2);
                 }
 
-                resultsDashboard.style.display = "block";
-                
-                // Trigger Decode Magic
-                decodeText(statusText, finalTxt, isCritical);
-
-                if (result.forecast_graph_base64) document.getElementById("forecastGraph").src = "data:image/png;base64," + result.forecast_graph_base64;
-
-            } catch (error) { showError("Connection lost. Verify backend."); } 
-            finally { btnSubmit.disabled = false; btnSubmit.innerText = "Initialize Model Processing"; }
+            } catch (error) {
+                // Agar sach mein connection lost hua to asal wajah dikhayega
+                resultBox.innerHTML = `<span class='error-text'>⚠️ Connection lost. Verify backend.</span>\nDetails: ${error.message}`;
+            } finally {
+                // Button ko wapis normal kar dein
+                submitBtn.disabled = false;
+                submitBtn.innerText = "Initialize Analysis";
+            }
         });
-
-        function showError(msg) { errorAlert.innerText = "⚠️ " + msg; errorAlert.style.display = "block"; }
     </script>
+
 </body>
 </html>
