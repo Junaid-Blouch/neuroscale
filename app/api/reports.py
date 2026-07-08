@@ -1,6 +1,4 @@
 ﻿from fastapi import APIRouter, UploadFile, File, Depends, HTTPException, BackgroundTasks
-from sqlalchemy.orm import Session
-from app.db.database import get_db
 from app.db import models
 import datetime
 import base64
@@ -84,7 +82,6 @@ def generate_document_in_background(filename: str, forecast_data: list, max_load
 async def generate_prediction(
     background_tasks: BackgroundTasks, # [NEW] Background task inject kiya
     file: UploadFile = File(...), 
-    db: Session = Depends(get_db)
 ):
     if not file.filename.endswith('.csv'):
         raise HTTPException(status_code=400, detail="Only CSV files are allowed.")
@@ -182,9 +179,7 @@ async def generate_prediction(
         total_cost_saved=np.random.uniform(50.0, 300.0), 
         drift_status=drift_stat
     )
-    db.add(new_log)
-    db.commit()
-
+    
     # ==========================================
     # [NEW] TRIGGER BACKGROUND REPORT GENERATION
     # ==========================================
